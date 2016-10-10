@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2016-10-10 Mon 01:00 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fitzhugh-Nagumo Network with Delays</title>
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Joseph P. McKenna" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Fitzhugh-Nagumo Network with Delays</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgheadline1">1. The model</a></li>
+<li><a href="#orgheadline2">2. Coupling conductances and delays</a></li>
+<li><a href="#orgheadline3">3. Equilibrium</a></li>
+<li><a href="#orgheadline4">4. Simulation and plot</a></li>
+<li><a href="#orgheadline5">5. Input current</a></li>
+<li><a href="#orgheadline6">6. Coupled system</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1"><span class="section-number-2">1</span> The model</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li>\(v_i(t)\): voltage of neuron \(i\) at time \(t\)</li>
+<li>\(w_i(t)\): recovery variable of neuron \(i\) at time \(t\)</li>
+<li>\(I_i(t)\): current input to neuron \(i\) at time \(t\)</li>
+<li>\(g_{ij}\): coupling conductance from neuron \(j\) to neuron \(i\)</li>
+<li>\(\tau_{ij}\): time delay from neuron \(j\) to neuron \(i\)</li>
+</ul>
+
+\begin{equation}
+\left\{\begin{array}{rcl}
+\dot{v_i} &=& v_i(t) - \frac13v_i^3(t) - w_i(t) - \sum_{i,j}g_{ij}[v_i(t) - v_j(t-\tau_{ij})] + I_i(t)\\
+\dot{w_i} &=& 0.08[v_i(t) + 0.7 - 0.8w_i(t)]
+\end{array}\right.
+\end{equation}
+</div>
+</div>
+
+<div id="outline-container-orgheadline2" class="outline-2">
+<h2 id="orgheadline2"><span class="section-number-2">2</span> Coupling conductances and delays</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li>\(-1\leq g_{ij}\leq 1\) uniformly distributed (\(i\neq j\)), \(g_{ii}=0\)</li>
+<li>\(0\leq \tau_{ij}\leq 1\) uniformly distributed, \(\tau_{ij}=\tau_{ji}\)</li>
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-octave">                                <span style="color: #8D8D84; font-style: italic;">% n: number of neurons</span>
+<span style="color: #0000FF;">global</span> n<span style="color: #006FE0;">;</span>
+n <span style="color: #006FE0;">=</span> <span style="color: #D0372D;">5</span><span style="color: #006FE0;">;</span>
+                                <span style="color: #8D8D84; font-style: italic;">% g: matrix of coupling conductances (n,n)</span>
+<span style="color: #0000FF;">global</span> g<span style="color: #006FE0;">;</span>
+g <span style="color: #006FE0;">=</span> <span style="color: #D0372D;">2</span><span style="color: #006FE0;">*</span>rand<span style="color: #707183;">(</span>n<span style="color: #707183;">)</span><span style="color: #006FE0;">-</span><span style="color: #D0372D;">1</span><span style="color: #006FE0;">;</span>
+g<span style="color: #707183;">(</span>logical<span style="color: #7388D6;">(</span>eye<span style="color: #909183;">(</span>n<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span> <span style="color: #006FE0;">=</span> <span style="color: #D0372D;">0</span><span style="color: #006FE0;">;</span>
+                                <span style="color: #8D8D84; font-style: italic;">% tau: matrix of time delays (n,n)</span>
+tau <span style="color: #006FE0;">=</span> rand<span style="color: #707183;">(</span>n<span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+tau <span style="color: #006FE0;">=</span> .<span style="color: #D0372D;">5</span><span style="color: #006FE0;">*</span><span style="color: #707183;">(</span>tau <span style="color: #006FE0;">+</span> transpose<span style="color: #7388D6;">(</span>tau<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+
+                                <span style="color: #8D8D84; font-style: italic;">% lags: flattened list of time delays</span>
+lags <span style="color: #006FE0;">=</span> reshape<span style="color: #707183;">(</span>tau<span style="color: #006FE0;">,</span><span style="color: #7388D6;">[</span><span style="color: #D0372D;">1</span><span style="color: #006FE0;">,</span>n<span style="color: #006FE0;">^</span><span style="color: #D0372D;">2</span><span style="color: #7388D6;">]</span><span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline3" class="outline-2">
+<h2 id="orgheadline3"><span class="section-number-2">3</span> Equilibrium</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+The resting membrane potential \(v_{\infty}\) and corresponding recovery variable \(w_{\infty}\) for a single neuron satisfy \(\dot{v}(v_{\infty},w_{\infty})=\dot{w}(v_{\infty},w_{\infty})=0\). Assuming no input current, from \(\dot{v}=0\), we get \(w_{\infty}=v_{\infty}-\frac13v_{\infty}^3\), and substituting this into \(\dot{w}=0\), we get that \(v_{\infty}\) satisfies \(8v_{\infty}^3+6v_{\infty}+21=0\).
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-octave">                                <span style="color: #8D8D84; font-style: italic;">% vinf: equilibrium membrane potential</span>
+                                <span style="color: #8D8D84; font-style: italic;">% winf: equilibrium recovery variable</span>
+                                <span style="color: #8D8D84; font-style: italic;">% solve for equilibrium, select only real soln</span>
+<span style="color: #0000FF;">global</span> vinf<span style="color: #006FE0;">;</span>
+vinf <span style="color: #006FE0;">=</span> roots<span style="color: #707183;">(</span><span style="color: #7388D6;">[</span><span style="color: #D0372D;">8</span> <span style="color: #D0372D;">0</span> <span style="color: #D0372D;">6</span> <span style="color: #D0372D;">21</span><span style="color: #7388D6;">]</span><span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+vinf <span style="color: #006FE0;">=</span> vinf<span style="color: #707183;">(</span>imag<span style="color: #7388D6;">(</span>vinf<span style="color: #7388D6;">)</span><span style="color: #006FE0;">==</span><span style="color: #D0372D;">0</span><span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+<span style="color: #0000FF;">global</span> winf<span style="color: #006FE0;">;</span>
+winf <span style="color: #006FE0;">=</span> vinf <span style="color: #006FE0;">-</span> vinf<span style="color: #006FE0;">^</span><span style="color: #D0372D;">3</span><span style="color: #006FE0;">/</span><span style="color: #D0372D;">3</span><span style="color: #006FE0;">;</span>
+                                <span style="color: #8D8D84; font-style: italic;">% y0: vector of equilibrium values</span>
+y0 <span style="color: #006FE0;">=</span> zeros<span style="color: #707183;">(</span><span style="color: #D0372D;">2</span><span style="color: #006FE0;">*</span>n<span style="color: #006FE0;">,</span><span style="color: #D0372D;">1</span><span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+y0<span style="color: #707183;">(</span><span style="color: #D0372D;">1</span><span style="color: #006FE0;">:</span>n<span style="color: #707183;">)</span> <span style="color: #006FE0;">=</span> vinf<span style="color: #006FE0;">;</span>
+y0<span style="color: #707183;">(</span>n<span style="color: #006FE0;">+</span><span style="color: #D0372D;">1</span><span style="color: #006FE0;">:</span><span style="color: #D0372D;">2</span><span style="color: #006FE0;">*</span>n<span style="color: #707183;">)</span> <span style="color: #006FE0;">=</span> winf<span style="color: #006FE0;">;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline4" class="outline-2">
+<h2 id="orgheadline4"><span class="section-number-2">4</span> Simulation and plot</h2>
+<div class="outline-text-2" id="text-4">
+<ul class="org-ul">
+<li>set values of \(v_i\) and \(w_i\) to equilibrium for \(t\leq t_0\)</li>
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-octave">                                <span style="color: #8D8D84; font-style: italic;">% sol: solution of dde</span>
+sol <span style="color: #006FE0;">=</span> dde23<span style="color: #707183;">(</span>@fndc<span style="color: #006FE0;">,</span>lags<span style="color: #006FE0;">,</span>y0<span style="color: #006FE0;">,</span><span style="color: #7388D6;">[</span><span style="color: #D0372D;">0</span><span style="color: #006FE0;">,</span><span style="color: #D0372D;">60</span><span style="color: #7388D6;">]</span><span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+plot<span style="color: #707183;">(</span>sol.x<span style="color: #006FE0;">,</span>sol.y<span style="color: #7388D6;">(</span><span style="color: #D0372D;">1</span><span style="color: #006FE0;">:</span>n<span style="color: #006FE0;">,:</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+xlabel<span style="color: #707183;">(</span><span style="color: #008000;">'t (ms)'</span><span style="color: #707183;">)</span>
+ylabel<span style="color: #707183;">(</span><span style="color: #008000;">'v (mV)'</span><span style="color: #707183;">)</span>
+saveas<span style="color: #707183;">(</span>gcf<span style="color: #006FE0;">,</span><span style="color: #008000;">'fndc.png'</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="./fndc.png" alt="fndc.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline5" class="outline-2">
+<h2 id="orgheadline5"><span class="section-number-2">5</span> Input current</h2>
+<div class="outline-text-2" id="text-5">
+<ul class="org-ul">
+<li>1 mA, 1 ms square impulse to neuron 1 at \(t=1\)</li>
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-octave">                                <span style="color: #8D8D84; font-style: italic;">% i_input: input current</span>
+                                <span style="color: #8D8D84; font-style: italic;">% t: present time</span>
+<span style="color: #0000FF;">function</span> i <span style="color: #006FE0;">=</span> <span style="color: #006699;">i_input</span><span style="color: #707183;">(</span>t<span style="color: #707183;">)</span>
+  <span style="color: #0000FF;">global</span> n<span style="color: #006FE0;">;</span>
+  i <span style="color: #006FE0;">=</span> zeros<span style="color: #707183;">(</span>n<span style="color: #006FE0;">,</span><span style="color: #D0372D;">1</span><span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+  <span style="color: #0000FF;">if</span> t<span style="color: #006FE0;">&gt;=</span><span style="color: #D0372D;">1</span> <span style="color: #006FE0;">&amp;&amp;</span> t<span style="color: #006FE0;">&lt;=</span><span style="color: #D0372D;">2</span>
+    i<span style="color: #707183;">(</span><span style="color: #D0372D;">1</span><span style="color: #707183;">)</span> <span style="color: #006FE0;">=</span> <span style="color: #D0372D;">1</span><span style="color: #006FE0;">;</span>
+  <span style="color: #0000FF;">end</span>
+<span style="color: #0000FF;">end</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline6" class="outline-2">
+<h2 id="orgheadline6"><span class="section-number-2">6</span> Coupled system</h2>
+<div class="outline-text-2" id="text-6">
+<div class="org-src-container">
+
+<pre class="src src-octave">                           <span style="color: #8D8D84; font-style: italic;">% fndc: (f)itzhugh-(n)agumo with (d)elayed (c)oupling</span>
+                           <span style="color: #8D8D84; font-style: italic;">% t: present time</span>
+                           <span style="color: #8D8D84; font-style: italic;">% y: present values of state variables (2n,1)</span>
+                           <span style="color: #8D8D84; font-style: italic;">% z: past values of state variables (2n,n^2)</span>
+<span style="color: #0000FF;">function</span> dydt <span style="color: #006FE0;">=</span> <span style="color: #006699;">fndc</span><span style="color: #707183;">(</span>t<span style="color: #006FE0;">,</span>y<span style="color: #006FE0;">,</span>z<span style="color: #707183;">)</span>
+  <span style="color: #0000FF;">global</span> n<span style="color: #006FE0;">;</span>
+  <span style="color: #0000FF;">global</span> g<span style="color: #006FE0;">;</span>
+                                <span style="color: #8D8D84; font-style: italic;">% v: present membrane potentials (n,1)</span>
+  v <span style="color: #006FE0;">=</span> y<span style="color: #707183;">(</span><span style="color: #D0372D;">1</span><span style="color: #006FE0;">:</span>n<span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+                                <span style="color: #8D8D84; font-style: italic;">% w: present recovery variables (n,1)</span>
+  w <span style="color: #006FE0;">=</span> y<span style="color: #707183;">(</span>n<span style="color: #006FE0;">+</span><span style="color: #D0372D;">1</span><span style="color: #006FE0;">:</span><span style="color: #D0372D;">2</span><span style="color: #006FE0;">*</span>n<span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+                                <span style="color: #8D8D84; font-style: italic;">% v_lag: past values of v (n,n)</span>
+                                <span style="color: #8D8D84; font-style: italic;">% v_lag(i,j) = v_j(t - tau_{ij})</span>
+                                <span style="color: #8D8D84; font-style: italic;">% k: 'flat' row-major index of (i,j)</span>
+  v_lag <span style="color: #006FE0;">=</span> zeros<span style="color: #707183;">(</span>n<span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+  <span style="color: #0000FF;">for</span> i <span style="color: #006FE0;">=</span> <span style="color: #D0372D;">1</span><span style="color: #006FE0;">:</span>n
+    <span style="color: #0000FF;">for</span> j <span style="color: #006FE0;">=</span> <span style="color: #D0372D;">1</span><span style="color: #006FE0;">:</span>n
+      k <span style="color: #006FE0;">=</span> n<span style="color: #006FE0;">*</span><span style="color: #707183;">(</span>i<span style="color: #006FE0;">-</span><span style="color: #D0372D;">1</span><span style="color: #707183;">)</span> <span style="color: #006FE0;">+</span> j<span style="color: #006FE0;">;</span>
+      v_lag<span style="color: #707183;">(</span>i<span style="color: #006FE0;">,</span>j<span style="color: #707183;">)</span> <span style="color: #006FE0;">=</span> z<span style="color: #707183;">(</span>j<span style="color: #006FE0;">,</span>k<span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+    <span style="color: #0000FF;">end</span>
+  <span style="color: #0000FF;">end</span>
+                                <span style="color: #8D8D84; font-style: italic;">% i_network: current from network connections</span>
+  i_network <span style="color: #006FE0;">=</span> zeros<span style="color: #707183;">(</span>n<span style="color: #006FE0;">,</span><span style="color: #D0372D;">1</span><span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+  <span style="color: #0000FF;">for</span> i <span style="color: #006FE0;">=</span> <span style="color: #D0372D;">1</span><span style="color: #006FE0;">:</span>n
+    i_network <span style="color: #006FE0;">=</span> i_network <span style="color: #006FE0;">+</span> g<span style="color: #707183;">(</span><span style="color: #006FE0;">:,</span>i<span style="color: #707183;">)</span><span style="color: #006FE0;">.*</span><span style="color: #707183;">(</span>v <span style="color: #006FE0;">-</span> v_lag<span style="color: #7388D6;">(</span><span style="color: #006FE0;">:,</span>i<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span><span style="color: #006FE0;">;</span>
+  <span style="color: #0000FF;">end</span>
+
+  dydt <span style="color: #006FE0;">=</span> <span style="color: #707183;">[</span>v <span style="color: #006FE0;">-</span> v<span style="color: #006FE0;">.^</span><span style="color: #D0372D;">3</span><span style="color: #006FE0;">/</span><span style="color: #D0372D;">3</span> <span style="color: #006FE0;">-</span> w <span style="color: #006FE0;">-</span> i_network <span style="color: #006FE0;">+</span> i_input<span style="color: #7388D6;">(</span>t<span style="color: #7388D6;">)</span>
+          <span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">08</span><span style="color: #006FE0;">*</span><span style="color: #7388D6;">(</span>v <span style="color: #006FE0;">+</span> <span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">7</span> <span style="color: #006FE0;">-</span> <span style="color: #D0372D;">0</span>.<span style="color: #D0372D;">8</span><span style="color: #006FE0;">*</span>w<span style="color: #7388D6;">)</span><span style="color: #707183;">]</span><span style="color: #006FE0;">;</span>
+<span style="color: #0000FF;">end</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Joseph P. McKenna</p>
+<p class="date">Created: 2016-10-10 Mon 01:00</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
